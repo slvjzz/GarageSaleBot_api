@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+<title>GarageSale</title>
+{% block name %}
+
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1>GarageSale</h1>
+
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Lot</th>
+            <th>Description</th>
+            <th>Auction Start Price</th>
+            <th>Buy Out Price</th>
+            <th>For Sale</th>
+            <th>Actions</th>
+        </tr>
+        {% for lot in lots %}
+            <tr>
+                <td>{{ lot.id }}</td>
+                <td>{{ lot.name }}</td>
+                <td>{{ lot.description }}</td>
+                <td>{{ lot.auction_start_price }}</td>
+                <td>{{ lot.sale_price }}</td>
+                <td>{{ lot.active }}</td>
+                <td>
+                    <a href="/lots/delete/{{ lot.id }}">Delete</a>
+                    <br>
+                    <a href="/lots/update/{{ lot.id }}">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <a href="/lots/add" class="btn btn-primary">Add</a>
+</div>
+{% endblock %}

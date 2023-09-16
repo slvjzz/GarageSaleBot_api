@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+<title>GarageSale</title>
+{% block name %}
+
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1>Lot Editor</h1>
+    <form action="{{ action }}" method="POST" enctype="multipart/form-data">
+        <br>
+        <input type="file" name="images" id="images" multiple>
+        <br>
+        <input type="text" name="name" id="name" value="{{ lot.name if lot else '' }}">
+        <input type="text" name="description" id="description" value="{{ lot.description if lot else '' }}">
+        <input type="number" name="auction_start_price" id="auction_start_price" value="{{ lot.auction_start_price if lot else '' }}">
+        <input type="number" name="sale_price" id="sale_price" value="{{ lot.sale_price if lot else '' }}">
+        <input type="checkbox" name="active" id="active" {% if lot and lot.active %}checked{% endif %}>
+        <input type="submit" value="{{ 'Update Lot' if lot else 'Add Lot' }}">
+    </form>
+</div>
+{% endblock %}
+
