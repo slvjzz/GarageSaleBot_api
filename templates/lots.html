@@ -15,6 +15,7 @@
             <th>Description</th>
             <th>Auction Start Price</th>
             <th>Buy Out Price</th>
+            <th>CURRENCY</th>
             <th>For Sale</th>
             <th>Actions</th>
         </tr>
@@ -25,6 +26,7 @@
                 <td>{{ lot.description }}</td>
                 <td>{{ lot.auction_start_price }}</td>
                 <td>{{ lot.sale_price }}</td>
+                <td>{{ lot.currency }}</td>
                 <td>{{ lot.active }}</td>
                 <td>
                     <a href="/lots/delete/{{ lot.id }}">Delete</a>

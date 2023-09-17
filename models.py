@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import PrimaryKeyConstraint
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -7,16 +8,47 @@ db = SQLAlchemy()
 class Lot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=True)
-    description = db.Column(db.Text, nullable=False)  # VARCHAR(MAX)
-    sale_price = db.Column(db.Integer, default=0)
-    auction_start_price = db.Column(db.Integer, default=0)
+    description = db.Column(db.Text, nullable=False)
+    sale_price = db.Column(db.Float, default=0.0)
+    auction_start_price = db.Column(db.Float, default=0.0)
+    currency = db.Column(db.String(200), default='GEL')
     active = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return '<Lot %r>' % self.id
 
 
 class Auction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
+    start_date = db.Column(db.DateTime, default=datetime.utcnow())
+    end_date = db.Column(db.DateTime, default=datetime.utcnow())
+    active = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return '<Auction %r>' % self.id
+
+
+class Bid(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())
+    lot_id = db.Column(db.Integer, db.ForeignKey('lot.id'), nullable=False)
+    auction_id = db.Column(db.Integer, db.ForeignKey('auction.id'), nullable=False)
+
+
+class LotsCategories(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return '<LotsCategories %r>' % self.id
+
+
+class LotCategory(db.Model):
+    lot_id = db.Column(db.Integer, db.ForeignKey('lot.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('lots_categories.id'), nullable=False)
+
+    __table_args__ = (
+        PrimaryKeyConstraint('lot_id', 'category_id'),
+    )
