@@ -53,7 +53,7 @@ def add():
         except Exception as e:
             return f'Ooops... \n{e}'
     else:
-        lots = Lot.query.order_by(Lot.date_created).all()
+        lots = Lot.query.filter_by(active=True).order_by(Lot.date_created).all()
         return render_template('auction_editor.html', lots=lots)
 
 
@@ -78,7 +78,7 @@ def update(id):
     unchecked_lots = []
 
     auction = Auction.query.get_or_404(id)
-    lots = Lot.query.order_by(Lot.date_created).all()
+    lots = Lot.query.filter_by(active=True).order_by(Lot.date_created).all()
     print(auction.name)
     if request.method == 'POST':
         auction_start_date_str = request.form['start_date']
