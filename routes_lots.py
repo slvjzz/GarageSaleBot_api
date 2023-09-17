@@ -31,7 +31,7 @@ def lots():
 @bp.route('/lots/add', methods=['GET', 'POST'])
 def add():
     if request.method == 'POST':
-        temp_upload_folder = ''
+        upload_path = ''
         lot_name = request.form['name']
         lot_description = request.form['description']
         lot_auction_start_price = request.form['auction_start_price']
@@ -44,13 +44,13 @@ def add():
         if 'images' in request.files:
             print('IMAAAGIESE\n', request.files)
             images = request.files.getlist('images')
-            temp_identifier = secure_filename(lot_name)
-            upload_path = get_upload_folder(temp_identifier)
-            for image in images:
-                if image.filename != '':
-                    filename = secure_filename(image.filename)
-                    temp_upload_folder = upload_path
-                    image.save(os.path.join(upload_path, filename))
+            if images[0].filename != '':
+                temp_identifier = secure_filename(lot_name)
+                upload_path = get_upload_folder(temp_identifier)
+                for image in images:
+                    if image.filename != '':
+                        filename = secure_filename(image.filename)
+                        image.save(os.path.join(upload_path, filename))
 
         new_lot = Lot(name=lot_name, description=lot_description, sale_price=lot_sale_price,
                       auction_start_price=lot_auction_start_price, active=lot_active)
@@ -59,12 +59,13 @@ def add():
             db.session.add(new_lot)
             db.session.commit()
 
-            if 'image' in request.files:
-                image = request.files['image']
-                if image.filename != '':
-                    lot_primary_key = new_lot.id
-                    new_upload_folder = get_upload_folder(lot_primary_key, do_not_create=True)
-                    os.rename(temp_upload_folder, new_upload_folder)
+            if images[0].filename != '':
+                lot_primary_key = new_lot.id
+                new_upload_folder = get_upload_folder(lot_primary_key, do_not_create=True)
+                try:
+                    os.rename(upload_path, new_upload_folder)
+                except Exception as e:
+                    print(f'Ooops... \n{e}\n\n Folder was not renamed...')
 
             return redirect('/lots')
         except Exception as e:
@@ -91,11 +92,12 @@ def update(id):
         if 'images' in request.files:
             print('IMAAAGIESE\n', request.files)
             images = request.files.getlist('images')
-            upload_path = get_upload_folder(lot.id)
-            for image in images:
-                if image.filename != '':
-                    filename = secure_filename(image.filename)
-                    image.save(os.path.join(upload_path, filename))
+            if len(images) > 0:
+                upload_path = get_upload_folder(lot.id)
+                for image in images:
+                    if image.filename != '':
+                        filename = secure_filename(image.filename)
+                        image.save(os.path.join(upload_path, filename))
         try:
             db.session.commit()
             return redirect('/lots')
@@ -121,6 +123,7 @@ def delete(id):
                 print(f'No Folder for lot #{id}')
         except Exception as e:
             print(f'OOOPS... \n{e}\n\nFolder amd files were not deleted....')
+            redirect('/lots')
 
         return redirect('/lots')
     except Exception as e:
