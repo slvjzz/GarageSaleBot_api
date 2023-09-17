@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
-<title>GarageSale</title>
+
 {% block name %}
+
+<title>GarageSale</title>
 
 {% endblock %}
 
@@ -48,6 +50,17 @@
                 <td><input type="checkbox" name="active" id="active" {% if lot and lot.active %}checked{% endif %}></td>
             </tr>
         </table>
+        <div>
+            <h3>Categories</h3>
+            <table>
+                {% for category in categories %}
+
+                <td>{{ category.name }}</td>
+                <td><input type="checkbox" name="category_{{ category.id }}" id="category_{{ category.id }}" {% if category.id in assigned_categories %}checked{% endif %}></td>
+
+                {% endfor %}
+            </table>
+        </div>
         <input type="submit" value="{{ 'Update Lot' if lot else 'Add Lot' }}">
     </form>
 </div>

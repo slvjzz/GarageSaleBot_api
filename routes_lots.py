@@ -1,6 +1,6 @@
 from PIL import Image
 from flask import Blueprint, render_template, request, redirect, send_from_directory
-from models import db, Lot
+from models import db, Lot, LotsCategories, LotCategory
 from werkzeug.utils import secure_filename
 import os
 import pillow_heif
@@ -58,7 +58,9 @@ def lots():
 
 @bp.route('/lots/add', methods=['GET', 'POST'])
 def add():
+    categories = LotsCategories.query.order_by(LotsCategories.id).all()
     if request.method == 'POST':
+        assigned_categories = []
         upload_path = ''
         lot_name = request.form['name']
         lot_description = request.form['description']
@@ -69,6 +71,13 @@ def add():
             lot_active = True
         else:
             lot_active = False
+
+        for key in request.form:
+            if key.startswith('category_'):
+                category_id = int(key.replace('category_', ''))
+                if 'on' in request.form.getlist(key):
+                    assigned_categories.append(category_id)
+        print(assigned_categories)
 
         if 'images' in request.files and any(image.filename for image in request.files.getlist('images')):
             print('IMAAAGIESE\n', request.files)
@@ -99,6 +108,15 @@ def add():
             db.session.add(new_lot)
             db.session.commit()
 
+            lot_id = new_lot.id
+
+            for category_id in assigned_categories:
+                lot_category = LotCategory.query.filter_by(lot_id=lot_id, category_id=category_id).first()
+                if not lot_category:
+                    auction_lot = LotCategory(lot_id=lot_id, category_id=category_id)
+                    db.session.add(auction_lot)
+            db.session.commit()
+
             if any(image.filename for image in request.files.getlist('images')):
                 lot_primary_key = new_lot.id
                 new_upload_folder = get_upload_folder(lot_primary_key, do_not_create=True)
@@ -111,14 +129,19 @@ def add():
         except Exception as e:
             return f'Ooops... \n{e}'
     else:
-        return render_template('lot_editor.html', lot=None, action='/lots/add', currencies=CURRENCIES)
+        return render_template('lot_editor.html', lot=None, action='/lots/add', currencies=CURRENCIES,
+                               categories=categories)
 
 
 @bp.route('/lots/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
+    categories = LotsCategories.query.order_by(LotsCategories.id).all()
     lot = Lot.query.get_or_404(id)
     image_folder = get_upload_folder(lot.id, do_not_create=True)
     image_filenames = []
+
+    assigned_categories = []
+    unassigned_categories = []
 
     if os.path.exists(image_folder):
         image_filenames = os.listdir(image_folder)
@@ -136,6 +159,16 @@ def update(id):
             lot.active = True
         else:
             lot.active = False
+
+        for key in request.form:
+            if key.startswith('category_'):
+                category_id = int(key.replace('category_', ''))
+                if 'on' in request.form.getlist(key):
+                    assigned_categories.append(category_id)
+
+        for category in categories:
+            if category.id not in assigned_categories:
+                unassigned_categories.append(category.id)
 
         if 'images' in request.files and any(image.filename for image in request.files.getlist('images')):
             print('IMAAAGIESE\n', request.files)
@@ -159,12 +192,32 @@ def update(id):
                             image.save(os.path.join(upload_path, filename))
         try:
             db.session.commit()
+
+            for category_id in unassigned_categories:
+                lot_category = LotCategory.query.filter_by(lot_id=id, category_id=category_id).first()
+                if lot_category:
+                    db.session.delete(lot_category)
+
+            for category_id in assigned_categories:
+                lot_category = LotCategory.query.filter_by(lot_id=id, category_id=category_id).first()
+                if not lot_category:
+                    lot_category = LotCategory(lot_id=id, category_id=category_id)
+                    db.session.add(lot_category)
+
+            db.session.commit()
             return redirect('/lots')
         except Exception as e:
             return f'Ooops... \n{e}'
     else:
+        assigned_categories = []
+        for category in categories:
+            lot_category = LotCategory.query.filter_by(lot_id=id, category_id=category.id).first()
+            if lot_category:
+                assigned_categories.append(category.id)
+        print('assigned categories:', assigned_categories)
         return render_template('lot_editor.html', lot=lot, action=f'/lots/update/{id}',
-                               image_filenames=image_filenames, image_folder=image_folder, currencies=CURRENCIES)
+                               image_filenames=image_filenames, image_folder=image_folder, currencies=CURRENCIES,
+                               categories=categories, assigned_categories=assigned_categories)
 
 
 @bp.route('/lots/delete/<int:id>')

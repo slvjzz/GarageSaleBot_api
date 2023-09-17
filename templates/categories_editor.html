@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block name %}
+
+<title>GarageSale</title>
+
+{% endblock %}
+
+{% block body %}
+<h1>Category Editor</h1>
+
+<form action="{{ action }}" method="POST" enctype="multipart/form-data">
+    <div>
+        <table>
+            <tr>
+                <th>Category</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="name" id="name" value="{{ category.name if category else '' }}"></td>
+            </tr>
+        </table>
+    </div>
+    <input type="submit" value="{{ 'Update Category' if auction else 'Add Category' }}">
+</form>
+
+{% endblock %}
