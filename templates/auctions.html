@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+
+{% block name %}
+<title>GarageSale</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1>GarageSale</h1>
+
+    <table>
+        <tr>
+            <th>#</th>
+            <th>Auction</th>
+            <th>Auction Start Date</th>
+            <th>Auction End Date</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+        {% for auction in auctions %}
+            <tr>
+                <td>{{ auction.id }}</td>
+                <td>{{ auction.name }}</td>
+                <td>{{ auction.start_date }}</td>
+                <td>{{ auction.end_date }}</td>
+                <td>{{ auction.active }}</td>
+                <td>
+                    <a href="/auctions/{{ auction.id }}/delete">Delete</a>
+                    <br>
+                    <a href="/auctions/{{ auction.id }}/update">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <a href="/auctions/add" class="btn btn-primary">Add</a>
+</div>
+{% endblock %}

@@ -2,6 +2,7 @@ from flask import Flask, redirect
 from flask_migrate import Migrate
 from models import db
 from routes_lots import bp as lots_bp
+from routes_auctions import bp as auctions_bp
 
 UPLOAD_FOLDER = "D:/GarageSale/uploaded_files/lots/"
 
@@ -13,6 +14,7 @@ app.config[
 db.init_app(app)
 migrate = Migrate(app, db)
 app.register_blueprint(lots_bp)
+app.register_blueprint(auctions_bp)
 
 
 @app.route('/')

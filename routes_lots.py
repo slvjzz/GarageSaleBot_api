@@ -1,8 +1,7 @@
 from PIL import Image
 from flask import Blueprint, render_template, request, redirect, send_from_directory
-from models import db, Lot, Auction
+from models import db, Lot
 from werkzeug.utils import secure_filename
-import io
 import os
 import pillow_heif
 
@@ -51,7 +50,7 @@ def image_folder(id, filename):
     return send_from_directory(way, filename)
 
 
-@bp.route('/lots', methods=['GET', 'POST'])
+@bp.route('/lots', methods=['GET'])
 def lots():
     lots = Lot.query.order_by(Lot.date_created).all()
     return render_template('lots.html', lots=lots)

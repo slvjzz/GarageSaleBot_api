@@ -21,13 +21,23 @@ class Lot(db.Model):
 
 class Auction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow())
-    start_date = db.Column(db.DateTime, default=datetime.utcnow())
-    end_date = db.Column(db.DateTime, default=datetime.utcnow())
+    name = db.Column(db.String(200), nullable=True)
+    date_created = db.Column(db.DateTime, default=datetime.now())
+    start_date = db.Column(db.DateTime, default=datetime.now())
+    end_date = db.Column(db.DateTime, default=datetime.now())
     active = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<Auction %r>' % self.id
+
+
+class AuctionLots(db.Model):
+    auction_id = db.Column(db.Integer, db.ForeignKey('auction.id'), nullable=False)
+    lot_id = db.Column(db.Integer, db.ForeignKey('lot.id'), nullable=False)
+
+    __table_args__ = (
+        PrimaryKeyConstraint('auction_id', 'lot_id'),
+    )
 
 
 class Bid(db.Model):

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+
+{% block name %}
+<title>GarageSale</title>
+{% endblock %}
+
+
+{% block body %}
+
+<form action="{{ action }}" method="POST" enctype="multipart/form-data">
+    <div>
+        <table>
+            <tr>
+                <th>Lot</th>
+                <th>Assign To Auction</th>
+            </tr>
+            {% for lot in lots %}
+            <tr>
+                <td>{{ lot.name }}</td>
+                <td><input type="checkbox" name="lot_{{ lot.id }}" id="lot_{{ lot.id }}" {% if lot.id in assigned_lots %}checked{% endif %}></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <table>
+        <tr>
+            <th>Auction</th>
+            <th>Auction Start Date</th>
+            <th>Auction End Date</th>
+            <th>Active</th>
+        </tr>
+        <tr>
+            <td><input type="text" name="name" id="name" value="{{ auction.name if auction else '' }}"></td>
+            <td><input type="datetime-local" name="start_date" id="start_date" value="{{ auction.start_date.strftime('%Y-%m-%dT%H:%M') if auction else '' }}"></td>
+            <td><input type="datetime-local" name="end_date" id="end_date" value="{{ auction.end_date.strftime('%Y-%m-%dT%H:%M') if auction else '' }}"></td>
+            <td><input type="checkbox" name="active" id="active" {% if auction and auction.active %}checked{% endif %}></td>
+        </tr>
+    </table>
+    <input type="submit" value="{{ 'Update Auction' if auction else 'Add Auction' }}">
+</form>
+
+{% endblock %}
