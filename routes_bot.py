@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from models import Lot
 
 bp = Blueprint('bot', __name__)
+#TEST
 
 
 @bp.route('/bot', methods=['GET'])
