@@ -4,9 +4,15 @@ from models import db, Lot, LotsCategories, LotCategory
 from werkzeug.utils import secure_filename
 import os
 import pillow_heif
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
 
 bp = Blueprint('lots', __name__)
-UPLOAD_FOLDER = "D:/GarageSale/uploaded_files/lots/"
+UPLOAD_FOLDER = config['files']['UPLOAD_FOLDER']
+
 CURRENCIES = ["GEL", "USD"]
 
 

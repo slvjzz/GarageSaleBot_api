@@ -3,9 +3,13 @@ from flask import Blueprint, request, jsonify
 from models import db, Lot, LotsCategories, LotCategory
 from models_schemas import LotsCategoriesSchema, LotSchema
 import os
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 bp = Blueprint('bot', __name__)
-UPLOAD_FOLDER = "D:/GarageSale/uploaded_files/lots/"
+UPLOAD_FOLDER = config['files']['UPLOAD_FOLDER']
 
 
 @bp.route('/bot', methods=['GET'])
