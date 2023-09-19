@@ -5,13 +5,17 @@ from routes_lots import bp as lots_bp
 from routes_auctions import bp as auctions_bp
 from routes_bot import bp as bot_bp
 from routes_categories import bp as categories_bp
+import configparser
 
-UPLOAD_FOLDER = "D:/GarageSale/uploaded_files/lots/"
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+UPLOAD_FOLDER = config['files']['UPLOAD_FOLDER']
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config[
-    'SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://API_User:API123@localhost/GarageSale_DB?driver=ODBC+Driver+17+for+SQL+Server'
+    'SQLALCHEMY_DATABASE_URI'] = config['database']['DATABASE_URL']
 
 db.init_app(app)
 migrate = Migrate(app, db)
