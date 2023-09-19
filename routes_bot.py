@@ -1,8 +1,11 @@
 import json
 from flask import Blueprint, request, jsonify
-from models import Lot
+from models import Lot, LotsCategories
+from models_schemas import LotsCategoriesSchema, LotSchema
+import os
 
 bp = Blueprint('bot', __name__)
+UPLOAD_FOLDER = "D:/GarageSale/uploaded_files/lots/"
 
 
 @bp.route('/bot', methods=['GET'])
@@ -18,18 +21,29 @@ def bot_home():
 
 @bp.route('/bot/lots', methods=['GET'])
 def get_lots():
-    lot_dicts = {}
     lots = Lot.query.order_by(Lot.date_created).all()
-    for lot in lots:
-        lot_dicts[lot.id] = {
-            'id': lot.id,
-            'name': lot.name,
-            'description': lot.description,
-            'sale_price': lot.sale_price,
-            'auction_start_price': lot.auction_start_price,
-            'currency': lot.currency,
-            'active': lot.active,
-            'date_created': lot.date_created,
-        }
-    print(lot_dicts)
-    return jsonify(lot_dicts)
+
+    schema = LotSchema(many=True)
+    lot_data = schema.dump(lots)
+
+    return jsonify(lot_data)
+
+
+@bp.route('/bot/categories', methods=['GET'])
+def get_lots_categories():
+    categories = LotsCategories.query.order_by(LotsCategories.name).all()
+
+    schema = LotsCategoriesSchema(many=True)
+    categories_data = schema.dump(categories)
+
+    return jsonify(categories_data)
+
+
+@bp.route('/bot/lots/<int:lot_id>', methods=['GET'])
+def get_lot(lot_id):
+    lot = Lot.query.get_or_404(lot_id)
+
+    schema = LotSchema(many=False)
+    lot_data = schema.dump(lot)
+
+    return jsonify(lot_data)
