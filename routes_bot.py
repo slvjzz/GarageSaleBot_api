@@ -36,9 +36,17 @@ def get_lots():
 @bp.route('/bot/categories', methods=['GET'])
 def get_lots_categories():
     categories = LotsCategories.query.order_by(LotsCategories.name).all()
+    categories_with_lots = []
+
+    for category in categories:
+        lots_in_category = Lot.query.join(LotCategory).filter(
+            LotCategory.category_id == category.id, Lot.active == True).count()
+
+        if lots_in_category > 0:
+            categories_with_lots.append(category)
 
     schema = LotsCategoriesSchema(many=True)
-    categories_data = schema.dump(categories)
+    categories_data = schema.dump(categories_with_lots)
 
     return jsonify(categories_data)
 
