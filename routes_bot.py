@@ -1,6 +1,7 @@
 import json
+from datetime import datetime
 from flask import Blueprint, request, jsonify
-from models import db, Lot, LotsCategories, LotCategory
+from models import db, Lot, LotsCategories, LotCategory, Bid
 from models_schemas import LotsCategoriesSchema, LotSchema
 import os
 import configparser
@@ -57,8 +58,29 @@ def get_lot(lot_id):
 
     schema = LotSchema(many=False)
     lot_data = schema.dump(lot)
-
+    print(lot_data)
     return jsonify(lot_data)
+
+
+@bp.route('/bot/lots/<int:lot_id>/set_bid', methods=['POST'])
+def post_bid(lot_id):
+    try:
+        data = request.get_json()
+        print(data)
+        amount = data.get('amount')
+        auction_id = data.get('auction_id')
+        user_id = data.get('user_id')
+
+        new_bid = Bid(amount=amount, lot_id=lot_id, auction_id=auction_id, user=user_id)
+        print(new_bid)
+        db.session.add(new_bid)
+        db.session.commit()
+
+        return jsonify({'message': True}), 201
+
+    except Exception as e:
+        print(e)
+        return jsonify({'message': False}), 500
 
 
 @bp.route('/bot/lots/<int:id>/photos', methods=['GET'])

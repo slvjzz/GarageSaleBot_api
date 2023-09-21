@@ -45,6 +45,8 @@ class Bid(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
     lot_id = db.Column(db.Integer, db.ForeignKey('lot.id'), nullable=False)
     auction_id = db.Column(db.Integer, db.ForeignKey('auction.id'), nullable=False)
+    amount = db.Column(db.Float, default=0.0)
+    user = db.Column(db.String(200), nullable=True)
 
 
 class LotsCategories(db.Model):
