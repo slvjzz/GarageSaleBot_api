@@ -5,6 +5,7 @@ from models import db, Lot, LotsCategories, LotCategory, Bid
 from models_schemas import LotsCategoriesSchema, LotSchema
 import os
 import configparser
+from flask_paginate import Pagination
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -26,12 +27,33 @@ def bot_home():
 
 @bp.route('/bot/lots', methods=['GET'])
 def get_lots():
-    lots = Lot.query.filter(Lot.active == True).order_by(Lot.date_created).all()
+    page = request.args.get('page', default=1, type=int)
+    per_page = request.args.get('per_page', default=5, type=int)
+
+    total_items = Lot.query.filter(Lot.active == True).count()
+
+    offset = (page - 1) * per_page
+
+    lots = Lot.query.filter(Lot.active == True).order_by(Lot.date_created).offset(offset).limit(per_page).all()
 
     schema = LotSchema(many=True)
     lot_data = schema.dump(lots)
 
-    return jsonify(lot_data)
+    max_pages = total_items // per_page + (1 if total_items % per_page > 0 else 0)
+
+    pagination = Pagination(page=page, per_page=per_page, total=total_items, css_framework='bootstrap4')
+
+    response_data = {
+        "items": lot_data,
+        "pagination": {
+            "total": total_items,
+            "pages": max_pages,  # Максимальное количество страниц
+            "page": page,
+            "per_page": per_page
+        }
+    }
+
+    return jsonify(response_data)
 
 
 @bp.route('/bot/categories', methods=['GET'])
