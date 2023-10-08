@@ -5,11 +5,14 @@
 <title>GarageSale</title>
 {% endblock %}
 
+{% block header %}
+    <h1>Auctions</h1>
+{% endblock %}
+
 {% block body %}
 <div class="content">
-    <h1>GarageSale</h1>
 
-    <table>
+    <table class="table">
         <tr>
             <th>#</th>
             <th>Auction</th>
@@ -34,6 +37,8 @@
         {% endfor %}
     </table>
 
-    <a href="/auctions/add" class="btn btn-primary">Add</a>
+    <div class="d-grid col-1 mx-auto">
+        <a href="/auctions/add" class="btn btn-outline-success">Add</a>
+    </div>
 </div>
 {% endblock %}

@@ -5,12 +5,16 @@
 <title>GarageSale</title>
 {% endblock %}
 
+{% block header %}
+    <h1>Auction</h1>
+{% endblock %}
+
 
 {% block body %}
 
 <form action="{{ action }}" method="POST" enctype="multipart/form-data">
     <div>
-        <table>
+        <table class="table">
             <tr>
                 <th>Lot</th>
                 <th>Assign To Auction</th>
@@ -23,7 +27,7 @@
             {% endfor %}
         </table>
     </div>
-    <table>
+    <table class="table">
         <tr>
             <th>Auction</th>
             <th>Auction Start Date</th>
@@ -31,12 +35,21 @@
             <th>Active</th>
         </tr>
         <tr>
-            <td><input type="text" name="name" id="name" value="{{ auction.name if auction else '' }}"></td>
-            <td><input type="datetime-local" name="start_date" id="start_date" value="{{ auction.start_date.strftime('%Y-%m-%dT%H:%M') if auction else '' }}"></td>
-            <td><input type="datetime-local" name="end_date" id="end_date" value="{{ auction.end_date.strftime('%Y-%m-%dT%H:%M') if auction else '' }}"></td>
-            <td><input type="checkbox" name="active" id="active" {% if auction and auction.active %}checked{% endif %}></td>
+            <td><input class="form-control" type="text" name="name" id="name" value="{{ auction.name if auction else '' }}"></td>
+            <td><input class="form-control" type="datetime-local" name="start_date" id="start_date"
+                       {% if not auction %}value="{{ default_date }}"
+                       {% else %}value="{{ auction.start_date.strftime('%Y-%m-%dT%H:%M') }}"
+                       {% endif %}></td>
+            <td><input class="form-control" type="datetime-local" name="end_date" id="end_date"
+                       {% if not auction %}value="{{ default_end_date_str }}"
+                       {% else %}value="{{ auction.end_date.strftime('%Y-%m-%dT%H:%M') }}"
+                       {% endif %}></td>
+            <td><input class="form-control" type="checkbox" name="active" id="active" {% if auction and auction.active %}checked{% endif %}></td>
         </tr>
     </table>
+    <div class="d-grid col-1 mx-auto">
+        <input type="submit" value="{{ 'Update Auction' if auction else 'Add Auction' }}" class="btn btn-outline-success">
+    </div>
     <input type="submit" value="{{ 'Update Auction' if auction else 'Add Auction' }}">
 </form>
 

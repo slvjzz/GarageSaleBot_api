@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, send_from_directory
 from models import db, Auction, Lot, AuctionLots
-from datetime import datetime
+from datetime import datetime, timedelta
 
 bp = Blueprint('auctions', __name__)
 
@@ -13,6 +13,12 @@ def auctions():
 
 @bp.route('/auctions/add', methods=['GET', 'POST'])
 def add():
+    now_date = datetime.now()
+    end_date = now_date + timedelta(days=7)
+
+    default_start_date_str = now_date.strftime('%Y-%m-%dT%H:%M')
+    default_end_date_str = end_date.strftime('%Y-%m-%dT%H:%M')
+
     if request.method == 'POST':
         auction_start_date_str = request.form['start_date']
         auction_end_date_str = request.form['end_date']
@@ -54,7 +60,8 @@ def add():
             return f'Ooops... \n{e}'
     else:
         lots = Lot.query.filter_by(active=True).order_by(Lot.date_created).all()
-        return render_template('auction_editor.html', lots=lots)
+        return render_template('auction_editor.html', lots=lots, default_date=default_start_date_str,
+                               default_end_date_str=default_end_date_str)
 
 
 @bp.route('/auctions/<int:id>/delete', methods=['GET'])
@@ -76,6 +83,12 @@ def delete(id):
 def update(id):
     checked_lots = []
     unchecked_lots = []
+
+    now_date = datetime.now()
+    end_date = now_date + timedelta(days=7)
+
+    default_start_date_str = now_date.strftime('%Y-%m-%dT%H:%M')
+    default_end_date_str = end_date.strftime('%Y-%m-%dT%H:%M')
 
     auction = Auction.query.get_or_404(id)
     lots = Lot.query.order_by(Lot.date_created).all()
@@ -131,4 +144,5 @@ def update(id):
                 assigned_lots.append(lot.id)
         print('assigned lots:', assigned_lots)
         return render_template('auction_editor.html', action=f'/auctions/{id}/update', auction=auction, lots=lots,
-                               assigned_lots=assigned_lots)
+                               assigned_lots=assigned_lots, default_date=default_start_date_str,
+                               default_end_date_str=default_end_date_str)

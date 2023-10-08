@@ -6,9 +6,12 @@
 
 {% endblock %}
 
+{% block header %}
+    <h1>Lot</h1>
+{% endblock %}
+
 {% block body %}
 <div class="content">
-    <h1>Lot Editor</h1>
     {% if image_filenames %}
     <div>
         <h3>Images:</h3>
@@ -23,10 +26,10 @@
         <br>
         <div>
             <h3>Upload Photos</h3>
-            <input type="file" name="images" id="images" multiple>
+            <input  class="form-control" type="file" name="images" id="images" multiple>
         </div>
         <br>
-        <table>
+        <table class="table">
             <tr>
                 <th>Name</th>
                 <th>Description</th>
@@ -36,23 +39,23 @@
                 <th>For Sale</th>
             </tr>
             <tr>
-                <td><input type="text" name="name" id="name" value="{{ lot.name if lot else '' }}"></td>
-                <td><input type="text" name="description" id="description" value="{{ lot.description if lot else '' }}"></td>
-                <td><input type="number" name="auction_start_price" id="auction_start_price" value="{{ lot.auction_start_price if lot else '' }}"></td>
-                <td><input type="number" name="sale_price" id="sale_price" value="{{ lot.sale_price if lot else '' }}"></td>
+                <td><input class="form-control" type="text" name="name" id="name" value="{{ lot.name if lot else '' }}"></td>
+                <td><input class="form-control" type="text" name="description" id="description" value="{{ lot.description if lot else '' }}"></td>
+                <td><input class="form-control" type="number" name="auction_start_price" id="auction_start_price" value="{{ lot.auction_start_price if lot else '' }}"></td>
+                <td><input class="form-control" type="number" name="sale_price" id="sale_price" value="{{ lot.sale_price if lot else '' }}"></td>
                 <td>
-                    <select name="currency" id="currency" value="{{ lot.currency if lot else '' }}">
+                    <select class="form-select form-select-lg mb-3"  name="currency" id="currency" value="{{ lot.currency if lot else '' }}">
                         {% for currency in currencies %}
                             <option value="{{ currency }}" {% if lot and lot.currency == currency %}selected{% endif %}>{{ currency }}</option>
                         {% endfor %}
                     </select>
                 </td>
-                <td><input type="checkbox" name="active" id="active" {% if lot and lot.active %}checked{% endif %}></td>
+                <td><input class="form-control" type="checkbox" name="active" id="active" {% if lot and lot.active %}checked{% endif %}></td>
             </tr>
         </table>
         <div>
             <h3>Categories</h3>
-            <table>
+            <table class="table">
                 {% for category in categories %}
 
                 <td>{{ category.name }}</td>
@@ -61,7 +64,9 @@
                 {% endfor %}
             </table>
         </div>
-        <input type="submit" value="{{ 'Update Lot' if lot else 'Add Lot' }}">
+        <div class="d-grid col-1 mx-auto">
+            <input type="submit" class="btn btn-outline-success" value="{{ 'Update Lot' if lot else 'Add Lot' }}">
+        </div>
     </form>
 </div>
 {% endblock %}

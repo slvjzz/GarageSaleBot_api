@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect
 
-from models import db, LotsCategories
+from models import db, LotsCategories, LotCategory
 
 bp = Blueprint('categories', __name__)
 
@@ -13,12 +13,33 @@ def categories():
 
 @bp.route('/categories/<int:id>/delete', methods=['GET'])
 def delete(id):
-    return 'DELETE'
+    category_to_delete = LotsCategories.query.get_or_404(id)
+    try:
+        LotCategory.query.filter_by(category_id=id).delete()
+
+        db.session.delete(category_to_delete)
+        db.session.commit()
+        return redirect('/categories')
+
+    except Exception as e:
+        print(f'OOOPS... Category was not deleted \n{e}')
+        return redirect('/categories')
 
 
 @bp.route('/categories/<int:id>/update', methods=['GET', 'POST'])
 def update(id):
-    return 'UPDATE'
+    category = LotsCategories.query.get_or_404(id)
+    if request.method == 'POST':
+        category.name = request.form['name']
+
+        try:
+            db.session.commit()
+            return redirect('/categories')
+        except Exception as e:
+            print(f'OOOPS... Category was not deleted \n{e}')
+            return redirect('/categories')
+    else:
+        return render_template('categories_editor.html', category=category, action=f'/categories/{id}/update')
 
 
 @bp.route('/categories/add', methods=['GET', 'POST'])

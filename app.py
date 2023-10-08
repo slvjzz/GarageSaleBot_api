@@ -13,9 +13,12 @@ config.read('config.ini')
 UPLOAD_FOLDER = config['files']['UPLOAD_FOLDER']
 
 app = Flask(__name__)
+
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = config['database']['DATABASE_URL']
+
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -23,6 +26,11 @@ app.register_blueprint(lots_bp)
 app.register_blueprint(auctions_bp)
 app.register_blueprint(bot_bp)
 app.register_blueprint(categories_bp)
+
+
+# Celery Config
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 
 
 @app.route('/')

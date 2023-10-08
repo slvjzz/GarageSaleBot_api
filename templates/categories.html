@@ -6,23 +6,26 @@
 
 {% endblock %}
 
+{% block header %}
+    <h1>Categories</h1>
+{% endblock %}
+
 {% block body %}
 <div class="content">
-    <h1>GarageSale</h1>
-
-    <table>
+    <table class="table">
         <tr>
             <th>#</th>
             <th>Category</th>
+            <th>Action</th>
         </tr>
         {% for category in categories %}
             <tr>
                 <td>{{ category.id }}</td>
                 <td>{{ category.name }}</td>
                 <td>
-                    <a href="/categories/{{ category.id }}/delete">Delete</a>
+                    <a href="/categories/{{ category.id }}/delete">Rename</a>
                     <br>
-                    <a href="/lots/{{ category.id }}/update">Update</a>
+                    <a href="/categories/{{ category.id }}/update">Update</a>
                 </td>
             </tr>
         {% endfor %}

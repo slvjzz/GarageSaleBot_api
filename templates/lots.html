@@ -4,11 +4,14 @@
 <title>GarageSale</title>
 {% endblock %}
 
+{% block header %}
+    <h1>GarageSale</h1>
+{% endblock %}
+
 {% block body %}
 <div class="content">
-    <h1>GarageSale</h1>
 
-    <table>
+    <table class="table">
         <tr>
             <th>#</th>
             <th>Lot</th>
@@ -29,14 +32,16 @@
                 <td>{{ lot.currency }}</td>
                 <td>{{ lot.active }}</td>
                 <td>
-                    <a href="/lots/delete/{{ lot.id }}">Delete</a>
+                    <a href="/lots/delete/{{ lot.id }}" class="btn btn-outline-success">Delete</a>
                     <br>
-                    <a href="/lots/update/{{ lot.id }}">Update</a>
+                    <a href="/lots/update/{{ lot.id }}" class="btn btn-outline-success">Update</a>
                 </td>
             </tr>
         {% endfor %}
     </table>
 
-    <a href="/lots/add" class="btn btn-primary">Add</a>
+    <div class="d-grid col-1 mx-auto">
+        <a href="/lots/add" class="btn btn-outline-success">Add</a>
+    </div>
 </div>
 {% endblock %}

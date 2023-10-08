@@ -2,3 +2,15 @@ body {
     margin: 0;
     font-family: sans-serif;
 }
+
+h1 {
+    padding: 15;
+}
+
+body a {
+    color: white;
+}
+
+body table a {
+    color: black;
+}
