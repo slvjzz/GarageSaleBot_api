@@ -47,6 +47,7 @@ class Bid(db.Model):
     auction_id = db.Column(db.Integer, db.ForeignKey('auction.id'), nullable=False)
     amount = db.Column(db.Float, default=0.0)
     user = db.Column(db.String(200), nullable=True)
+    chat_id = db.Column(db.Integer, default=0)
 
 
 class LotsCategories(db.Model):

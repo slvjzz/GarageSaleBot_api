@@ -29,9 +29,9 @@
                 <td>{{ auction.end_date }}</td>
                 <td>{{ auction.active }}</td>
                 <td>
-                    <a href="/auctions/{{ auction.id }}/delete">Delete</a>
+                    <a href="/auctions/{{ auction.id }}/delete" class="btn btn-outline-danger">Delete</a>
                     <br>
-                    <a href="/auctions/{{ auction.id }}/update">Update</a>
+                    <a href="/auctions/{{ auction.id }}/update" class="btn btn-outline-info">Update</a>
                 </td>
             </tr>
         {% endfor %}

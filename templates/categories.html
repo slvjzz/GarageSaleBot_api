@@ -23,9 +23,9 @@
                 <td>{{ category.id }}</td>
                 <td>{{ category.name }}</td>
                 <td>
-                    <a href="/categories/{{ category.id }}/delete">Rename</a>
+                    <a href="/categories/{{ category.id }}/delete" class="btn btn-outline-danger">Delete</a>
                     <br>
-                    <a href="/categories/{{ category.id }}/update">Update</a>
+                    <a href="/categories/{{ category.id }}/update" class="btn btn-outline-info">Rename</a>
                 </td>
             </tr>
         {% endfor %}
