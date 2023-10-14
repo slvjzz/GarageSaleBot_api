@@ -92,8 +92,9 @@ def post_bid(lot_id):
         amount = data.get('amount')
         auction_id = data.get('auction_id')
         user_id = data.get('user_id')
+        chat_id = data.get('chat_id')
 
-        new_bid = Bid(amount=amount, lot_id=lot_id, auction_id=auction_id, user=user_id)
+        new_bid = Bid(amount=amount, lot_id=lot_id, auction_id=auction_id, user=user_id, chat_id=chat_id)
         print(new_bid)
         db.session.add(new_bid)
         db.session.commit()

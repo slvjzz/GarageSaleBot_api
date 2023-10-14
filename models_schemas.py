@@ -35,18 +35,29 @@ class LotSchema(Schema):
 
         return max_bid.amount if max_bid else None
 
+    def get_chat_id(self, lot_id):
+        max_bid = Bid.query \
+            .filter_by(lot_id=lot_id) \
+            .order_by(Bid.amount.desc()) \
+            .first()
+
+        return max_bid.chat_id if max_bid else None
+
     @post_dump
     def add_auction_id_field(self, data, **kwargs):
         lot_id = data.get('id')
         auction = self.get_auction_id(lot_id)
         max_bid_amount = self.get_max_bid_amount(lot_id)
+        chat_id = self.get_chat_id(lot_id)
 
         if auction is not None:
             data['auction_id'] = auction.id
             data['auction_end_date'] = auction.end_date
             data['max_bid_amount'] = max_bid_amount
+            data['chat_id'] = chat_id
         else:
             data['auction_id'] = None
             data['auction_end_date'] = None
             data['max_bid_amount'] = None
+            data['chat_id'] = None
         return data
